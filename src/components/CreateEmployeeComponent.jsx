@@ -1,33 +1,42 @@
 import React, { useState } from "react";
 import EmployeeService from "../services/EmployeeService";
 import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+} from "@mui/material";
 
-function CreateEmployeeComponenet() {
-  const [firstName, setfirstName] = useState("");
-  const [lastName, setlastName] = useState("");
-  const [emailId, setemailId] = useState("");
+function CreateEmployeeComponent() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [emailId, setEmailId] = useState("");
   const navigate = useNavigate();
-  const saveEmployee = (e) => {
+
+  const saveEmployee = async (e) => {
     e.preventDefault();
-    let employee = {
-      firstName: firstName,
-      lastName: lastName,
-      emailId: emailId,
+    const employee = {
+      firstName,
+      lastName,
+      emailId,
     };
     console.log("employee => " + JSON.stringify(employee));
-    fetch(EmployeeService(), {
-      method: "POST",
-      body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName,
-        emailId: emailId,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
 
-    navigate("/employee");
+    try {
+      await fetch(EmployeeService(), {
+        method: "POST",
+        body: JSON.stringify(employee),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+      navigate("/employee");
+    } catch (error) {
+      console.error("Error saving employee:", error);
+    }
   };
 
   const cancel = (e) => {
@@ -35,70 +44,64 @@ function CreateEmployeeComponenet() {
     navigate("/employee");
   };
 
-  const changeFirstNameHandler = (e) => {
-    setfirstName(e.target.value);
-  };
-  const changelastNameHandler = (e) => {
-    setlastName(e.target.value);
-  };
-  const changeEmailHandler = (e) => {
-    setemailId(e.target.value);
-  };
-
   return (
-    <div>
-      <div className="container"></div>
-      <div className="row">
-        <div className="card col-md-6 offset-md-3 offset-md-3">
-          <h3 className="text-center">Add Employee</h3>
-          <div className="card-body">
-            <form>
-              <div className="form-group">
-                <label> First Name:</label>
-                <input
-                  placeholder="First Name"
-                  name="firstName"
-                  className="form-control"
+    <Container maxWidth="sm">
+      <Box mt={5}>
+        <Paper elevation={3}>
+          <Box p={3}>
+            <Typography variant="h5" align="center" gutterBottom>
+              Add Employee
+            </Typography>
+            <form onSubmit={saveEmployee}>
+              <Box mb={2}>
+                <TextField
+                  variant="outlined"
+                  label="First Name"
+                  fullWidth
                   value={firstName}
-                  onChange={changeFirstNameHandler}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
-              </div>
-              <div className="form-group">
-                <label> Last Name:</label>
-                <input
-                  placeholder="Last Name"
-                  name="lastName"
-                  className="form-control"
+              </Box>
+              <Box mb={2}>
+                <TextField
+                  variant="outlined"
+                  label="Last Name"
+                  fullWidth
                   value={lastName}
-                  onChange={changelastNameHandler}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
-              </div>
-              <div className="form-group">
-                <label> Email:</label>
-                <input
-                  placeholder="Email Address"
-                  name="emailId"
-                  className="form-control"
+              </Box>
+              <Box mb={2}>
+                <TextField
+                  variant="outlined"
+                  label="Email Address"
+                  fullWidth
                   value={emailId}
-                  onChange={changeEmailHandler}
+                  onChange={(e) => setEmailId(e.target.value)}
                 />
-              </div>
-              <button className="btn btn-success" onClick={saveEmployee}>
-                Save
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={cancel}
-                style={{ marginLeft: "10px" }}
-              >
-                Cancel
-              </button>
+              </Box>
+              <Box display="flex" justifyContent="space-between">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={cancel}
+                >
+                  Cancel
+                </Button>
+              </Box>
             </form>
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 }
 
-export default CreateEmployeeComponenet;
+export default CreateEmployeeComponent;

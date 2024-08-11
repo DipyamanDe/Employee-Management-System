@@ -1,16 +1,17 @@
 import React from "react";
+import { AppBar, Toolbar, Typography, Container } from "@mui/material";
 
 function HeaderComponent() {
   return (
-    <div>
-      <header>
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-          <div>
-            <p className="navbar-brand">Employee Management App</p>
-          </div>
-        </nav>
-      </header>
-    </div>
+    <AppBar position="static">
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <Typography variant="h6" component="div">
+            Employee Edge
+          </Typography>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 

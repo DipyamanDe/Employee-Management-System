@@ -1,43 +1,40 @@
 import React, { useEffect, useState } from "react";
-import EmployeeService from "../services/EmployeeService";
-import { useNavigate } from "react-router-dom";
+import { TextField, Button, Container, Typography, Card, CardContent, Grid, Box } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import EmployeeService from "../services/EmployeeService";
 
-function UpdateEmployee(props) {
-  const [firstName, setfirstName] = useState("");
-  const [lastName, setlastName] = useState("");
-  const [emailId, setemailId] = useState("");
+function UpdateEmployee() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [emailId, setEmailId] = useState("");
 
   const { id } = useParams();
   const navigate = useNavigate();
 
   const updateEmployee = (e) => {
     e.preventDefault();
-    let employee = {
-      firstName: firstName,
-      lastName: lastName,
-      emailId: emailId,
+    const employee = {
+      firstName,
+      lastName,
+      emailId,
     };
-    console.log("employee => " + JSON.stringify(employee));
-    console.log("id=> " + JSON.stringify(id));
-    axios.put(EmployeeService() + "/" + id, employee);
-
-    navigate("/employee");
+    axios.put(`${EmployeeService()}/${id}`, employee).then(() => {
+      navigate("/employee");
+    });
   };
 
-  let employee = { firstName: firstName, lastName: lastName, emailId: emailId };
   useEffect(() => {
     axios
-      .get(EmployeeService() + "/" + id)
+      .get(`${EmployeeService()}/${id}`)
       .then((res) => {
-        employee = res.data;
-        setfirstName(employee.firstName);
-        setlastName(employee.lastName);
-        setemailId(employee.emailId);
+        const employee = res.data;
+        setFirstName(employee.firstName);
+        setLastName(employee.lastName);
+        setEmailId(employee.emailId);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   }, [id]);
 
@@ -46,69 +43,55 @@ function UpdateEmployee(props) {
     navigate("/employee");
   };
 
-  const changeFirstNameHandler = (e) => {
-    setfirstName(e.target.value);
-  };
-  const changelastNameHandler = (e) => {
-    setlastName(e.target.value);
-  };
-  const changeEmailHandler = (e) => {
-    setemailId(e.target.value);
-  };
-
   return (
-    <div>
-      <div className="container"></div>
-      <div className="row">
-        <div className="card col-md-6 offset-md-3 offset-md-3">
-          <h3 className="text-center">Update Employee</h3>
-          <div className="card-body">
-            <form>
-              <div className="form-group">
-                <label> First Name:</label>
-                <input
-                  placeholder="First Name"
-                  name="firstName"
-                  className="form-control"
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Card>
+        <CardContent>
+          <Typography variant="h4" align="center" gutterBottom>
+            Update Employee
+          </Typography>
+          <Box component="form" onSubmit={updateEmployee} sx={{ mt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="First Name"
+                  variant="outlined"
+                  fullWidth
                   value={firstName}
-                  onChange={changeFirstNameHandler}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
-              </div>
-              <div className="form-group">
-                <label> Last Name:</label>
-                <input
-                  placeholder="Last Name"
-                  name="lastName"
-                  className="form-control"
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Last Name"
+                  variant="outlined"
+                  fullWidth
                   value={lastName}
-                  onChange={changelastNameHandler}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
-              </div>
-              <div className="form-group">
-                <label> Email:</label>
-                <input
-                  placeholder="Email Address"
-                  name="emailId"
-                  className="form-control"
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Email Address"
+                  variant="outlined"
+                  fullWidth
                   value={emailId}
-                  onChange={changeEmailHandler}
+                  onChange={(e) => setEmailId(e.target.value)}
                 />
-              </div>
-              <button className="btn btn-success" onClick={updateEmployee}>
-                update
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={cancel}
-                style={{ marginLeft: "10px" }}
-              >
+              </Grid>
+            </Grid>
+            <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
+              <Button variant="contained" color="primary" type="submit">
+                Update
+              </Button>
+              <Button variant="contained" color="secondary" onClick={cancel}>
                 Cancel
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+              </Button>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
 
